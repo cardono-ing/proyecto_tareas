@@ -27,9 +27,11 @@ class Password extends BaseController
                 $mail->setTo($u['email']);
                 $mail->setSubject(lang('Password.subject'));
                 $mail->setMessage(lang('Password.body') . ' ' . $link);
-                $mail->send(false);
+                if (! $mail->send(false)) {
+                    log_message('error', 'Correo no enviado: ' . $mail->printDebugger(['headers']));
+                    }
             } catch (\Throwable $e) {
-                log_message('error', 'Mail error: ' . $e->getMessage());
+                log_message('error', 'Error de correo: ' . $e->getMessage());
             }
             if (ENVIRONMENT === 'development') {
                 $msg .= ' [DEV] ' . $link;
