@@ -19,7 +19,8 @@
             <a class="nav-link text-white me-3" href="/users"><?= lang('App.users') ?></a>
         <?php endif; ?>
         <a class="nav-link text-white me-3" href="/tasks"><?= lang('App.tasks') ?></a>
-        <a class="nav-link text-white me-3" href="/logout"><?= lang('App.logout') ?></a>
+        <a class="nav-link text-white px-2" href="/logout"
+   onclick="return confirm('<?= esc(lang('App.logout_confirm'), 'js') ?>')"><?= lang('App.logout') ?></a>
     <?php else: ?>
         <a class="nav-link text-white me-3" href="/signup"><?= lang('App.signup') ?></a>
         <a class="nav-link text-white me-3" href="/login"><?= lang('App.login') ?></a>

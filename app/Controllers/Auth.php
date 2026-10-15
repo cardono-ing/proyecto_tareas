@@ -41,21 +41,43 @@ class Auth extends BaseController
     public function login() { return view('auth/login'); }
 
     public function loginPost()
-    {
-        $u = (new UserModel())->where('email', $this->request->getPost('email'))->first();
-        if (! $u || ! password_verify((string) $this->request->getPost('password'), $u['password'])) {
-            return redirect()->back()->withInput()->with('error', lang('Auth.bad_login'));
-        }
-        if (! $u['active']) {
-            return redirect()->back()->with('error', lang('Auth.inactive'));
-        }
-        session()->set(['user_id' => $u['id'], 'user_name' => $u['name'], 'is_admin' => (bool) $u['is_admin']]);
-        return redirect()->to('/')->with('success', lang('App.login_ok'));
+{
+    $modelo = new UserModel();
+    $u = $modelo->where('email', $this->request->getPost('email'))->first();
+    if (! $u || ! password_verify((string) $this->request->getPost('password'), $u['password'])) {
+        return redirect()->back()->withInput()->with('error', lang('Auth.bad_login'));
     }
+    if (! $u['active']) {
+        return redirect()->back()->with('error', lang('Auth.inactive'));
+    }
+    session()->set(['user_id' => $u['id'], 'user_name' => $u['name'], 'is_admin' => (bool) $u['is_admin']]);
 
-    public function logout()
-    {
-        session()->remove(['user_id', 'user_name', 'is_admin']);
-        return redirect()->to('/')->with('success', lang('App.logout_ok'));
+    $respuesta = redirect()->to('/')->with('success', lang('App.login_ok'));
+
+    // Recordarme: guarda solo el hash del token en la BD y el token en la cookie
+    if ($this->request->getPost('remember')) {
+        $token = bin2hex(random_bytes(32));
+        $modelo->update($u['id'], ['remember_token' => hash('sha256', $token)]);
+        $respuesta->setCookie([
+            'name'     => 'recordar',
+            'value'    => $u['id'] . ':' . $token,
+            'expire'   => 60 * 60 * 24 * 30,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
     }
+    return $respuesta;
+}
+
+public function logout()
+{
+    $id = session()->get('user_id');
+    if ($id) {
+        (new UserModel())->update($id, ['remember_token' => null]);
+    }
+    session()->remove(['user_id', 'user_name', 'is_admin']);
+    $respuesta = redirect()->to('/')->with('success', lang('App.logout_ok'));
+    $respuesta->deleteCookie('recordar');
+    return $respuesta;
+}
 }

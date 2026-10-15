@@ -6,4 +6,5 @@ return [
     'welcome' => 'Bienvenido', 'welcome_msg' => 'Organiza tus tareas escolares en un solo lugar.',
     'login_ok' => 'Has iniciado sesión correctamente.',
     'logout_ok' => 'Has cerrado sesión correctamente.',
+    'logout_confirm' => '¿Estás seguro de que deseas cerrar sesión?',
 ];
