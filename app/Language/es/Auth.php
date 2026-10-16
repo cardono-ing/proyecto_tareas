@@ -8,4 +8,7 @@ return [
     'signup_ok' => 'Cuenta creada. Actívala con este enlace: ',
     'activated' => 'Cuenta activada. Ya puedes iniciar sesión.',
     'bad_token' => 'Enlace de activación inválido.',
+    'signup_ok'    => 'Cuenta creada. Revisa tu correo para activarla.',
+    'mail_subject' => 'Activa tu cuenta',
+    'mail_body'    => 'Usa este enlace para activar tu cuenta:',
 ];

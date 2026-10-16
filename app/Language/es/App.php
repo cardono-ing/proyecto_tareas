@@ -7,4 +7,10 @@ return [
     'login_ok' => 'Has iniciado sesión correctamente.',
     'logout_ok' => 'Has cerrado sesión correctamente.',
     'logout_confirm' => '¿Estás seguro de que deseas cerrar sesión?',
+    'name' => 'Nombre',
+    'email' => 'Correo electrónico',
+    'password' => 'COntraseña',
+    'repeat' => 'Repetir contraseña',
+    'signup' => 'Registrarse',
+    'cancel' => 'Cancelar',
 ];

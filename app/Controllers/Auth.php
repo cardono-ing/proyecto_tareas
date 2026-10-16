@@ -9,11 +9,23 @@ class Auth extends BaseController
     public function signupPost()
     {
         $rules = [
-            'name'     => 'required|min_length[2]|max_length[100]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[8]',
-            'repeat'   => 'required|matches[password]',
-        ];
+    'name' => [
+        'label' => lang('Auth.name'),
+        'rules' => 'required|min_length[2]|max_length[100]',
+    ],
+    'email' => [
+        'label' => lang('Auth.email'),
+        'rules' => 'required|valid_email|is_unique[users.email]',
+    ],
+    'password' => [
+        'label' => lang('Auth.password'),
+        'rules' => 'required|min_length[8]',
+    ],
+    'repeat' => [
+        'label' => lang('Auth.repeat'),
+        'rules' => 'required|matches[password]',
+    ],
+];
         if (! $this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -26,7 +38,19 @@ class Auth extends BaseController
             'is_admin' => 0,
             'token'    => $token,
         ]);
-        return redirect()->to('/login')->with('success', lang('Auth.signup_ok') . base_url("activate/$token"));
+        $enlace = base_url("activate/$token");
+try {
+    $correo = service('email');
+    $correo->setTo($this->request->getPost('email'));
+    $correo->setSubject(lang('Auth.mail_subject'));
+    $correo->setMessage(lang('Auth.mail_body') . ' ' . $enlace);
+    if (! $correo->send(false)) {
+        log_message('error', 'Correo de activación no enviado: ' . $correo->printDebugger(['headers']));
+    }
+} catch (\Throwable $e) {
+    log_message('error', 'Error de correo: ' . $e->getMessage());
+}
+return redirect()->to('/login')->with('success', lang('Auth.signup_ok'));
     }
 
     public function activate($token)

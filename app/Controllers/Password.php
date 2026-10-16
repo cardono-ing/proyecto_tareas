@@ -33,9 +33,7 @@ class Password extends BaseController
             } catch (\Throwable $e) {
                 log_message('error', 'Error de correo: ' . $e->getMessage());
             }
-            if (ENVIRONMENT === 'development') {
-                $msg .= ' [DEV] ' . $link;
-            }
+           
         }
         return redirect()->to('/login')->with('success', $msg);
     }
